@@ -1,0 +1,22 @@
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #d6dfe6;
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #3b4d57;
+}
+
+#app {
+  width: 100%;
+}
