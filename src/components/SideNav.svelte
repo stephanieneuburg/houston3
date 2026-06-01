@@ -2,33 +2,67 @@
   import { onMount } from 'svelte';
   import gsap from 'gsap';
   import ScrollTrigger from 'gsap/ScrollTrigger';
-  import { CLUSTER_HEIGHT, DOTS_PER_CLUSTER, LINE_CONTAINER, UNIT } from '../lib/navConfig.js';
+  import { CLUSTER_HEIGHT, DOTS_PER_CLUSTER } from '../lib/navConfig.js';
   import { chapters } from '../lib/chapters.js';
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const NUM_CHAPTERS = chapters.length;
-  const OUTRO_INDICATOR_END = NUM_CHAPTERS * UNIT + CLUSTER_HEIGHT / 2 + 70;
+  const NUM_CHAPTERS     = chapters.length;
+  const BASE_LINE_HEIGHT = 8;   // px — default nav-line height (= dot height)
+  const MIN_LINE_HEIGHT  = 4;   // px — floor so no chapter disappears entirely
 
   let navEl;
   let indicatorEl;
-  let navLines = [];
+  let navLines    = [];
   let outroActive = false;
+  let navPositions = []; // Y-center of each cluster boundary [0..NUM_CHAPTERS]
+  let outroTl      = null;
 
-  // Build arrays for the template
   const clusters = Array.from({ length: NUM_CHAPTERS + 1 }, (_, i) => i);
-  const dots     = Array.from({ length: DOTS_PER_CLUSTER }, (_, i) => i);
-  const lines    = Array.from({ length: NUM_CHAPTERS }, (_, i) => i);
+  const dots     = Array.from({ length: DOTS_PER_CLUSTER });
 
+  // ── Nav position math ──
+  // Distance from cluster[i] center to cluster[i+1] center:
+  //   CLUSTER_HEIGHT/2 + 1px gap + lineHeight + 1px gap + CLUSTER_HEIGHT/2
+  function buildNavPositions(lineHeights) {
+    const positions = [CLUSTER_HEIGHT / 2];
+    for (let i = 0; i < NUM_CHAPTERS; i++) {
+      const prev = positions[positions.length - 1];
+      positions.push(prev + CLUSTER_HEIGHT + 2 + lineHeights[i]);
+    }
+    return positions;
+  }
+
+  // Measure chapter pixel heights, scale proportionally so the total
+  // line-height budget stays constant (NUM_CHAPTERS × BASE_LINE_HEIGHT).
+  function measureAndBuild() {
+    const chapterEls = document.querySelectorAll('.chapter');
+    if (!chapterEls.length) return;
+
+    const heights = Array.from(chapterEls).map(el => el.getBoundingClientRect().height);
+    const total   = heights.reduce((a, b) => a + b, 0);
+    const budget  = NUM_CHAPTERS * BASE_LINE_HEIGHT;
+
+    const lineHeights = heights.map(h =>
+      Math.max(MIN_LINE_HEIGHT, Math.round(budget * h / total))
+    );
+
+    navLines.forEach((line, i) => {
+      if (line) line.style.height = lineHeights[i] + 'px';
+    });
+
+    navPositions = buildNavPositions(lineHeights);
+  }
+
+  // ── Scroll tracking ──
   function updateNav() {
-    if (outroActive) return;
+    if (outroActive || !navPositions.length) return;
 
     const mid = window.innerHeight / 2;
     let activeChapter     = 0;
     let progressInChapter = 0;
 
     const chapterEls = document.querySelectorAll('.chapter');
-
     for (let i = 0; i < chapterEls.length; i++) {
       const rect = chapterEls[i].getBoundingClientRect();
       if (rect.bottom < mid) {
@@ -42,38 +76,18 @@
     }
 
     navLines.forEach((line, i) => {
-      if (!line) return;
-      line.classList.toggle('active', i === activeChapter);
+      if (line) line.classList.toggle('active', i === activeChapter);
     });
 
-    const centerY = (activeChapter + progressInChapter) * UNIT + CLUSTER_HEIGHT / 2;
-    indicatorEl.style.top = `${centerY}px`;
+    const y = navPositions[activeChapter] +
+              progressInChapter * (navPositions[activeChapter + 1] - navPositions[activeChapter]);
+    indicatorEl.style.top = `${y}px`;
   }
 
-  onMount(() => {
-    // ── Intro animation ──
-    gsap.set('.nav-cluster, .nav-line', { opacity: 0, x: -10 });
-
-    const introTl = gsap.timeline({ paused: true })
-      .to('.nav-cluster, .nav-line', {
-        opacity: 1, x: 0,
-        stagger: { each: 0.035, from: 'start' },
-        duration: 0.5,
-        ease: 'power3.out',
-      });
-
-    introTl.play();
-
-    ScrollTrigger.create({
-      trigger: '#intro',
-      start: 'top bottom',
-      end: 'bottom top',
-      onEnterBack: () => introTl.reverse(),
-      onLeave:     () => introTl.play(),
-    });
-
-    // ── Outro animation ──
-    const outroTl = gsap.timeline({
+  // ── Outro timeline (lazy — built after positions are known) ──
+  function buildOutroTl() {
+    const end = navPositions[NUM_CHAPTERS] + 70;
+    return gsap.timeline({
       paused: true,
       onStart:           () => { outroActive = true; },
       onReverseComplete: () => {
@@ -89,22 +103,49 @@
       ease: 'power2.in',
     }, 0)
     .to(indicatorEl, {
-      top: OUTRO_INDICATOR_END,
+      top: end,
       duration: 0.55,
       ease: 'power1.in',
     }, 0.25);
+  }
+
+  onMount(() => {
+    // ── Intro animation ──
+    gsap.set('.nav-cluster, .nav-line', { opacity: 0, y: -10 });
+
+    const introTl = gsap.timeline({ paused: true })
+      .to('.nav-cluster, .nav-line', {
+        opacity: 1, y: 0,
+        stagger: { each: 0.035, from: 'start' },
+        duration: 0.5,
+        ease: 'power3.out',
+      });
+
+    introTl.play();
+
+    ScrollTrigger.create({
+      trigger: '#intro',
+      start: 'top bottom',
+      end: 'bottom top',
+      onEnterBack: () => introTl.reverse(),
+      onLeave:     () => introTl.play(),
+    });
 
     ScrollTrigger.create({
       trigger: '#outro',
       start: 'top bottom',
       end: 'bottom top',
-      onEnter:     () => outroTl.play(),
-      onLeaveBack: () => outroTl.reverse(),
+      onEnter:     () => { if (!outroTl) outroTl = buildOutroTl(); outroTl.play(); },
+      onLeaveBack: () => outroTl?.reverse(),
     });
 
-    // ── Chapter scroll tracking ──
     window.addEventListener('scroll', updateNav, { passive: true });
-    updateNav();
+
+    // Measure after the browser has laid out sibling chapter elements
+    requestAnimationFrame(() => {
+      measureAndBuild();
+      updateNav();
+    });
 
     return () => {
       window.removeEventListener('scroll', updateNav);
