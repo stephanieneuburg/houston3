@@ -12,9 +12,18 @@
 }
 
 body {
-  background: #d6dfe6;
-  font-family: Georgia, 'Times New Roman', serif;
+  --bg-color: #d6dfe6;
+  --dot-color: #a9d9ae;
+  background: var(--bg-color);
+  transition: background 0.9s ease;
+  font-family: "late-serif-variable", sans-serif;
+  font-variation-settings: 'wght' 400;
   color: #3b4d57;
+}
+
+body.chapter-alt-theme {
+  --bg-color: #b8c4ce;
+  --dot-color: #ffbdcb;
 }
 
 #app {

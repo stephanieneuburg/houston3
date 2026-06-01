@@ -207,8 +207,9 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #a9d9ae;
+    background: var(--dot-color, #a9d9ae);
     flex-shrink: 0;
+    transition: background 0.9s ease;
   }
 
   .nav-line {

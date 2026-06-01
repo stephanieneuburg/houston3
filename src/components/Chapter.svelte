@@ -1,12 +1,14 @@
 <script>
-  let { index, title } = $props();
+  let { index, title, hideTitle = false, body = null } = $props();
 </script>
 
 <section class="chapter" id="chapter-{index + 1}">
   <div class="chapter-inner">
     <p class="chapter-label">Chapter {index + 1}</p>
-    <h2 class="chapter-title">{title}</h2>
-    <p class="chapter-text">Content for this chapter will be added in the next step.</p>
+    {#if !hideTitle}
+      <h2 class="chapter-title">{title}</h2>
+    {/if}
+    <p class="chapter-text">{body ?? 'Content for this chapter will be added in the next step.'}</p>
   </div>
 </section>
 
@@ -23,6 +25,7 @@
   }
 
   .chapter-label {
+    font-family: 'Roboto Mono', 'Courier New', monospace;
     font-size: 0.72rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
