@@ -8,7 +8,9 @@
     {#if !hideTitle}
       <h2 class="chapter-title">{title}</h2>
     {/if}
-    <p class="chapter-text">{body ?? 'Content for this chapter will be added in the next step.'}</p>
+    {#each (body ?? 'Content for this chapter will be added in the next step.').split('\n\n') as paragraph}
+      <p class="chapter-text">{paragraph}</p>
+    {/each}
   </div>
 </section>
 
@@ -44,5 +46,10 @@
     font-size: 1.1rem;
     line-height: 1.8;
     color: #4e6471;
+    margin-top: 1.2rem;
+  }
+
+  .chapter-text:first-of-type {
+    margin-top: 0;
   }
 </style>
