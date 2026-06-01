@@ -14,6 +14,10 @@
 body {
   --bg-color: #d6dfe6;
   --dot-color: #a9d9ae;
+  --indicator-color: #80ff00;
+  --text-primary: #2c3e48;
+  --text-body: #4e6471;
+  --text-label: #8aa8b5;
   background: var(--bg-color);
   transition: background 0.9s ease;
   font-family: "late-serif-variable", sans-serif;
@@ -22,8 +26,12 @@ body {
 }
 
 body.chapter-alt-theme {
-  --bg-color: #b8c4ce;
+  --bg-color: #2e4252;
   --dot-color: #ffbdcb;
+  --indicator-color: #e03030;
+  --text-primary: #f0f4f6;
+  --text-body: #c8d8e0;
+  --text-label: #7aaabf;
 }
 
 #app {

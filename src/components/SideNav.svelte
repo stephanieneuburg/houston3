@@ -309,12 +309,12 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #80ff00;
+    background: var(--indicator-color, #80ff00);
+    transition: background 0.9s ease;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     top: 4px;
     z-index: 1;
-    box-shadow: 0 0 14px rgba(128, 255, 0, 0.5);
     pointer-events: none;
   }
 </style>

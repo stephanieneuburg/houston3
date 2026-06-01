@@ -1,8 +1,8 @@
 <script>
-  let { index, title, hideTitle = false, body = null } = $props();
+  let { index, title, hideTitle = false, body = null, children } = $props();
 </script>
 
-<section class="chapter" id="chapter-{index + 1}">
+<section class="chapter" class:has-extra={!!children} id="chapter-{index + 1}">
   <div class="chapter-inner">
     <p class="chapter-label">Chapter {index + 1}</p>
     {#if !hideTitle}
@@ -12,6 +12,11 @@
       <p class="chapter-text">{paragraph}</p>
     {/each}
   </div>
+  {#if children}
+    <div class="chapter-extra">
+      {@render children()}
+    </div>
+  {/if}
 </section>
 
 <style>
@@ -20,6 +25,20 @@
     display: flex;
     align-items: center;
     padding: 80px 100px 80px 120px;
+  }
+
+  .chapter.has-extra {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+
+  .chapter-extra {
+    width: calc(100vw - 120px);
+    margin-top: 72px;
+    margin-bottom: 20px;
   }
 
   .chapter-inner {
@@ -31,21 +50,24 @@
     font-size: 0.72rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: #8aa8b5;
+    color: var(--text-label, #8aa8b5);
+    transition: color 0.9s ease;
     margin-bottom: 1rem;
   }
 
   .chapter-title {
     font-size: 2.5rem;
     line-height: 1.2;
-    color: #2c3e48;
+    color: var(--text-primary, #2c3e48);
+    transition: color 0.9s ease;
     margin-bottom: 1.5rem;
   }
 
   .chapter-text {
     font-size: 1.1rem;
     line-height: 1.8;
-    color: #4e6471;
+    color: var(--text-body, #4e6471);
+    transition: color 0.9s ease;
     margin-top: 1.2rem;
   }
 

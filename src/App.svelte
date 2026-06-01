@@ -4,6 +4,7 @@
   import ScrollTrigger from 'gsap/ScrollTrigger';
   import SideNav from './components/SideNav.svelte';
   import Intro   from './components/Intro.svelte';
+  import HomelessnessMap from './components/HomelessnessMap.svelte';
   import Chapter from './components/Chapter.svelte';
   import Outro   from './components/Outro.svelte';
   import { chapters } from './lib/chapters.js';
@@ -31,7 +32,13 @@
 <Intro />
 
 {#each chapters as chapter, i}
-  <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body} />
+  {#if i === 0}
+    <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body}>
+      {#snippet children()}<HomelessnessMap />{/snippet}
+    </Chapter>
+  {:else}
+    <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body} />
+  {/if}
 {/each}
 
 <Outro />
