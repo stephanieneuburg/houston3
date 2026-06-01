@@ -121,23 +121,54 @@
         ease: 'power3.out',
       });
 
+    const myTriggers = [];
+
+    // Ball starts near viewport top, scrubs down to first nav position as intro scrolls by
+    requestAnimationFrame(() => {
+      const navRect = navEl.getBoundingClientRect();
+      const viewportStartTop = 40 - navRect.top;   // ball at y=40 in viewport
+      const targetTop        = CLUSTER_HEIGHT / 2; // first cluster center in nav
+
+      gsap.set(indicatorEl, { top: viewportStartTop });
+
+      myTriggers.push(ScrollTrigger.create({
+        trigger: '#intro',
+        start: 'top top',
+        end: 'bottom center',
+        scrub: 0.6,
+        onUpdate(self) {
+          if (!outroActive) {
+            gsap.set(indicatorEl, {
+              top: viewportStartTop + self.progress * (targetTop - viewportStartTop),
+            });
+          }
+        },
+        onLeave() {
+          gsap.set(indicatorEl, { top: targetTop });
+        },
+        onEnterBack() {
+          gsap.set(indicatorEl, { top: viewportStartTop });
+        },
+      }));
+    });
+
     introTl.play();
 
-    ScrollTrigger.create({
+    myTriggers.push(ScrollTrigger.create({
       trigger: '#intro',
       start: 'top bottom',
       end: 'bottom top',
       onEnterBack: () => introTl.reverse(),
       onLeave:     () => introTl.play(),
-    });
+    }));
 
-    ScrollTrigger.create({
+    myTriggers.push(ScrollTrigger.create({
       trigger: '#outro',
       start: 'top bottom',
       end: 'bottom top',
       onEnter:     () => { if (!outroTl) outroTl = buildOutroTl(); outroTl.play(); },
       onLeaveBack: () => outroTl?.reverse(),
-    });
+    }));
 
     window.addEventListener('scroll', updateNav, { passive: true });
 
@@ -149,7 +180,7 @@
 
     return () => {
       window.removeEventListener('scroll', updateNav);
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      myTriggers.forEach(t => t.kill());
     };
   });
 </script>
@@ -174,7 +205,7 @@
         aria-label="Go to chapter {clusterIdx + 1}"
       >
         <div class="nav-dot"></div>
-        <span class="chapter-label">{chapters[clusterIdx].title}</span>
+        <span class="chapter-label">{chapters[clusterIdx].navLabel ?? chapters[clusterIdx].title}</span>
       </div>
     {/if}
   {/each}
