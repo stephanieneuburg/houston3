@@ -1,6 +1,21 @@
+<script>
+  import { onMount } from 'svelte';
+
+  let shimmerActive = $state(false);
+
+  onMount(() => {
+    const t = setTimeout(() => (shimmerActive = true), 1200);
+    return () => clearTimeout(t);
+  });
+
+  function handleShimmerEnd() {
+    shimmerActive = false;
+  }
+</script>
+
 <section id="intro-question">
   <p class="question">
-    How can <span class="city-swap"><span class="city-inner"><span class="city-label">Houston</span><span class="city-label">a US city</span></span></span> move thousands of people from the streets into apartments while the national crisis deepens?
+    How can <span class="city-swap"><span class="city-inner"><span class="city-label">Houston</span><span class="city-label" class:shimmer={shimmerActive} onanimationend={handleShimmerEnd}>a US city</span></span></span> move thousands of people from the streets into apartments while the national crisis deepens?
   </p>
 </section>
 
@@ -28,7 +43,7 @@
     overflow: hidden;
     height: 1.4em;
     vertical-align: bottom;
-    cursor: default;
+    cursor: pointer;
   }
 
   .city-inner {
@@ -49,5 +64,26 @@
 
   .city-label:first-child {
     color: #1C3056;
+  }
+
+  @keyframes city-shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  .city-label.shimmer {
+    background: linear-gradient(
+      90deg,
+      #8aa8b5 30%,
+      #c2d9e3 44%,
+      #e8f4f8 50%,
+      #c2d9e3 56%,
+      #8aa8b5 70%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: city-shimmer 1.3s ease-in-out forwards;
   }
 </style>

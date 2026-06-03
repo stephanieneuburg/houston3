@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
 
   // ── Constants ──────────────────────────────────────────────────────────────
   const COLS = 46, ROWS = 28, CELL = 20;
@@ -273,6 +275,10 @@
         grid: [ROWS, COLS],
         axis: 'x',
       },
+      scrollTrigger: {
+        trigger: sectionEl,
+        start: 'top 80%',
+      },
     });
   });
 </script>
@@ -293,17 +299,6 @@
     aria-label="Dot-matrix map of US homelessness rates by state, 2023"
   >
     <!-- Background: transparent so the chapter's background shows through and transitions together -->
-
-    <!-- Ocean dots first (painter's algorithm: land on top) -->
-    {#each cells as cell}
-      {#if !cell.isLand}
-        <circle
-          cx={cell.cx} cy={cell.cy} r={cell.r}
-          fill="#b8c4ce" opacity="0.6"
-          pointer-events="none"
-        />
-      {/if}
-    {/each}
 
     <!-- Land dots -->
     {#each cells as cell}
@@ -410,13 +405,12 @@
   .hm-root {
     position: relative;
     width: 100%;
-    max-width: 920px;
+    max-width: 1050px;
     margin: 0 auto;
   }
 
   .hm-svg {
     width: 100%;
-    max-width: 920px;
     height: auto;
     display: block;
   }

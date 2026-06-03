@@ -18,7 +18,7 @@
     const triggers = ALT_CHAPTERS.map(id => ScrollTrigger.create({
       trigger: id,
       start: 'top center',
-      end: 'bottom center',
+      end: 'bottom 70%',
       onEnter:     () => document.body.classList.add('chapter-alt-theme'),
       onLeave:     () => document.body.classList.remove('chapter-alt-theme'),
       onEnterBack: () => document.body.classList.add('chapter-alt-theme'),
