@@ -228,6 +228,10 @@
   <p class="stat-label">Number of patients in state psychiatric<br>facilities declined massively</p>
 </div>
 
+<div class="follow-text">
+  <p class="follow-paragraph">In the 1980s, recessions and budget cuts under President Reagan further exacerbated the crisis. At the same time, construction of affordable multifamily homes collapsed: in 1985, 515,000 multifamily homes were built in the U.S., but by 1991, that number had dropped to just 140,000. The poor were thus competing for fewer and fewer affordable apartments—a housing market like a game of musical chairs, where someone was always left out.</p>
+</div>
+
 <style>
   .data-section {
     min-height: 100vh;
@@ -353,5 +357,21 @@
     color: var(--text-body);
     transition: color 0.9s ease;
     max-width: 800px;
+  }
+
+  .follow-text {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 100px 80px 120px;
+  }
+
+  .follow-paragraph {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-body);
+    transition: color 0.9s ease;
+    max-width: 680px;
   }
 </style>

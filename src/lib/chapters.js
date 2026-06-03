@@ -1,5 +1,5 @@
 export const chapters = [
-  { title: 'State of the Crisis' },
+  { title: 'State of the Crisis', body: `On any given night in 2023, more than 650,000 people in the U.S. had no place to call home.` },
   {
     title: 'Who Are the Unhoused?',
     navLabel: 'Terri Harris #1',
