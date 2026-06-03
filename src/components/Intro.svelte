@@ -1,41 +1,10 @@
-<section id="intro">
-  <div class="intro-title">
-    <h1>–60%</h1>
-    <p>moved off Houston's streets since 2011</p>
-  </div>
-</section>
-
 <section id="intro-question">
-  <p class="question">How can a US city move thousands of people from the streets into apartments while the national crisis deepens?</p>
+  <p class="question">
+    How can <span class="city-swap"><span class="city-inner"><span class="city-label">Houston</span><span class="city-label">a US city</span></span></span> move thousands of people from the streets into apartments while the national crisis deepens?
+  </p>
 </section>
 
 <style>
-  #intro {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .intro-title h1 {
-    font-size: clamp(4rem, 20vw, 25rem);
-    font-weight: normal;
-    letter-spacing: 0.06em;
-    color: #2c3e48;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .intro-title p {
-    font-size: 0.85rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: #7a9ba8;
-    margin-top: 1rem;
-    text-align: center;
-  }
-
   #intro-question {
     height: 100vh;
     display: flex;
@@ -45,11 +14,40 @@
   }
 
   .question {
-    font-size: 2.4rem;
-    font-weight: normal;
-    color: #2c3e48;
+    font-family: "noka", sans-serif;
+    font-size: 2.9rem;
+    font-weight: 300;
+    color: #8aa8b5;
     line-height: 1.4;
     text-align: center;
     max-width: 860px;
+  }
+
+  .city-swap {
+    display: inline-block;
+    overflow: hidden;
+    height: 1.4em;
+    vertical-align: bottom;
+    cursor: default;
+  }
+
+  .city-inner {
+    display: flex;
+    flex-direction: column;
+    transform: translateY(-50%);
+    transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .city-swap:hover .city-inner {
+    transform: translateY(0);
+  }
+
+  .city-label {
+    display: block;
+    line-height: 1.4;
+  }
+
+  .city-label:first-child {
+    color: #1C3056;
   }
 </style>
