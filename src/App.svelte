@@ -5,6 +5,7 @@
   import SideNav from './components/SideNav.svelte';
   import Intro   from './components/Intro.svelte';
   import HomelessnessMap from './components/HomelessnessMap.svelte';
+  import DataInfographics from './components/DataInfographics.svelte';
   import Chapter from './components/Chapter.svelte';
   import Outro   from './components/Outro.svelte';
   import { chapters } from './lib/chapters.js';
@@ -38,6 +39,9 @@
     </Chapter>
   {:else}
     <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body} />
+  {/if}
+  {#if i === 2}
+    <DataInfographics />
   {/if}
 {/each}
 

@@ -1,12 +1,26 @@
 <script>
   let { index, title, hideTitle = false, body = null, children } = $props();
+
+  const words = title.split(' ');
+  const splitTitle = words.length > 3;
+  const splitAt = Math.ceil(words.length / 2);
+  const titleLine1 = splitTitle ? words.slice(0, splitAt).join(' ') : title;
+  const titleLine2 = splitTitle ? words.slice(splitAt).join(' ') : '';
 </script>
 
 <section class="chapter" class:has-extra={!!children} id="chapter-{index + 1}">
   <div class="chapter-inner">
     <p class="chapter-label">Chapter {index + 1}</p>
     {#if !hideTitle}
-      <h2 class="chapter-title">{title}</h2>
+      <h2 class="chapter-title">
+        {#if splitTitle}
+          <span class="title-line">{titleLine1}</span>
+          <br>
+          <span class="title-line">{titleLine2}</span>
+        {:else}
+          {title}
+        {/if}
+      </h2>
     {/if}
     {#each (body ?? 'Content for this chapter will be added in the next step.').split('\n\n') as paragraph}
       <p class="chapter-text">{paragraph}</p>
@@ -56,11 +70,17 @@
   }
 
   .chapter-title {
-    font-size: 2.5rem;
+    font-family: "noka", sans-serif;
+    font-weight: 300;
+    font-size: 4rem;
     line-height: 1.2;
     color: var(--text-primary, #2c3e48);
     transition: color 0.9s ease;
     margin-bottom: 1.5rem;
+  }
+
+  .title-line {
+    display: inline;
   }
 
   .chapter-text {
