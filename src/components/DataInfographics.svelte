@@ -42,7 +42,32 @@
     [0,1,1,0],
   ];
 
+  // Returns a 2D array of inline style strings — darker at center, lighter at edge, with random jitter.
+  // Uses filter:brightness so it works with any theme color automatically.
+  function buildDepthStyles(grid) {
+    const rows = grid.length;
+    const cols = grid[0].length;
+    const cr = (rows - 1) / 2;
+    const cc = (cols - 1) / 2;
+    const maxDist = Math.sqrt(cr * cr + cc * cc) || 1;
+    return grid.map((row, r) =>
+      row.map((cell, c) => {
+        if (!cell) return '';
+        const t = Math.sqrt((r - cr) ** 2 + (c - cc) ** 2) / maxDist; // 0=center, 1=edge
+        const jitter = (Math.random() - 0.5) * 0.18;
+        const b = Math.min(1.15, Math.max(0.28, 0.48 + t * 0.57 + jitter));
+        return `filter: brightness(${b.toFixed(2)});`;
+      })
+    );
+  }
+
+  const styles1960 = buildDepthStyles(HOUSE_1960);
+  const styles1978 = buildDepthStyles(HOUSE_1978);
+  const styles1965 = buildDepthStyles(PERSON_1965);
+  const styles1979 = buildDepthStyles(PERSON_1979);
+
   let sectionEl;
+  let statEl;
   let sroCount1960 = $state(0);
   let sroCount1978 = $state(0);
   let psyCount1965 = $state(0);
@@ -106,6 +131,21 @@
       .to(dp1979, { opacity: 1, scale: 1,
           stagger: { each: 0.08, from: 'start' }, duration: 0.6, ease: 'back.out(1.5)' }, '<0.5');
 
+    // Stat reveal
+    const statNumber = statEl.querySelector('.stat-number');
+    const statLabel  = statEl.querySelector('.stat-label');
+    gsap.set([statNumber, statLabel], { opacity: 0 });
+
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: statEl,
+        start: 'top 65%',
+        toggleActions: 'play none none reverse',
+      }
+    })
+    .to(statNumber, { opacity: 1, duration: 1.1, ease: 'power2.out' })
+    .to(statLabel,  { opacity: 1, duration: 0.9, ease: 'power2.out' }, '-=0.5');
+
     return () => { tl.kill(); };
   });
 </script>
@@ -121,9 +161,9 @@
           <div class="year-label">1960</div>
           <div class="stat-count">{sroCount1960.toLocaleString()} SRO's</div>
           <div class="dot-grid house-1960" style="--cols: 9">
-            {#each HOUSE_1960 as row}
-              {#each row as cell}
-                <div class="dot {cell ? 'on' : 'off'}"></div>
+            {#each HOUSE_1960 as row, r}
+              {#each row as cell, c}
+                <div class="dot {cell ? 'on' : 'off'}" style={cell ? styles1960[r][c] : ''}></div>
               {/each}
             {/each}
           </div>
@@ -132,9 +172,9 @@
           <div class="year-label">1978</div>
           <div class="stat-count">{sroCount1978.toLocaleString()} SRO's</div>
           <div class="dot-grid house-1978" style="--cols: 5">
-            {#each HOUSE_1978 as row}
-              {#each row as cell}
-                <div class="dot {cell ? 'on' : 'off'}"></div>
+            {#each HOUSE_1978 as row, r}
+              {#each row as cell, c}
+                <div class="dot {cell ? 'on' : 'off'}" style={cell ? styles1978[r][c] : ''}></div>
               {/each}
             {/each}
           </div>
@@ -152,9 +192,9 @@
           <div class="year-label">1965</div>
           <div class="stat-count">{psyCount1965.toLocaleString()} Persons</div>
           <div class="dot-grid person-1965" style="--cols: 7">
-            {#each PERSON_1965 as row}
-              {#each row as cell}
-                <div class="dot {cell ? 'on' : 'off'}"></div>
+            {#each PERSON_1965 as row, r}
+              {#each row as cell, c}
+                <div class="dot {cell ? 'on' : 'off'}" style={cell ? styles1965[r][c] : ''}></div>
               {/each}
             {/each}
           </div>
@@ -163,9 +203,9 @@
           <div class="year-label">1979</div>
           <div class="stat-count">{psyCount1979.toLocaleString()} Persons</div>
           <div class="dot-grid person-1979" style="--cols: 4">
-            {#each PERSON_1979 as row}
-              {#each row as cell}
-                <div class="dot {cell ? 'on' : 'off'}"></div>
+            {#each PERSON_1979 as row, r}
+              {#each row as cell, c}
+                <div class="dot {cell ? 'on' : 'off'}" style={cell ? styles1979[r][c] : ''}></div>
               {/each}
             {/each}
           </div>
@@ -175,6 +215,18 @@
 
   </div>
 </section>
+
+<div class="stat-reveal" bind:this={statEl}>
+  <p class="stat-number">
+    <svg class="stat-arrow" viewBox="0 0 44 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="22" y1="2"  x2="22" y2="73" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="4"  y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+      <line x1="40" y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+    </svg>
+    68%
+  </p>
+  <p class="stat-label">Number of patients in state psychiatric<br>facilities declined massively</p>
+</div>
 
 <style>
   .data-section {
@@ -264,5 +316,42 @@
 
   .dot.off {
     background: transparent;
+  }
+
+  .stat-reveal {
+    min-height: 180vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 100px 80px 120px;
+  }
+
+  .stat-number {
+    display: flex;
+    align-items: baseline;
+    gap: 0.22em;
+    font-family: "noka", sans-serif;
+    font-weight: 300;
+    font-size: 20rem;
+    line-height: 1;
+    color: var(--text-primary);
+    transition: color 0.9s ease;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-arrow {
+    height: 0.73em;
+    width: auto;
+    flex-shrink: 0;
+    color: currentColor;
+  }
+
+  .stat-label {
+    font-size: 1.8rem;
+    line-height: 1.6;
+    color: var(--text-body);
+    transition: color 0.9s ease;
+    max-width: 800px;
   }
 </style>
