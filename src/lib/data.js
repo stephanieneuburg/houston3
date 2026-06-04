@@ -34,3 +34,10 @@ export const hub = {
   label: "Coalition for the Homeless",
   role:  "Lead agency · coordinates the system · runs shared data (HMIS)",
 };
+
+export const bureaucracy = {
+  stepsBefore: 76,
+  stepsAfter:   6,
+  daysBefore: 720,
+  daysAfter:   32,
+};

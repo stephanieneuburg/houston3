@@ -9,6 +9,7 @@
   import HoustonFocusMap from './components/HoustonFocusMap.svelte';
   import HousingSuccess from './components/HousingSuccess.svelte';
   import S11_WayHome from './scenes/S11_WayHome.svelte';
+  import S10_Bureaucracy from './scenes/S10_Bureaucracy.svelte';
   import WelfareStates from './components/WelfareStates.svelte';
   import FinlandInfographic from './components/FinlandInfographic.svelte';
   import HoustonLessons from './components/HoustonLessons.svelte';
@@ -56,6 +57,7 @@
   {#if i === 4}
     <HoustonFocusMap />
     <HousingSuccess />
+    <S10_Bureaucracy />
   {/if}
   {#if i === 5}
     <S11_WayHome />

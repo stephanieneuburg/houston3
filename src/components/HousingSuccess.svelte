@@ -5,12 +5,13 @@
   gsap.registerPlugin(ScrollTrigger);
 
   const COLS = 42, ROWS = 26;
-  const DOT_R = 8, GAP = 4, STEP = DOT_R * 2 + GAP;
-  const CANVAS_W = COLS * STEP, CANVAS_H = ROWS * STEP;
+  const DOT_R = 8, GAP = 4, STEP = DOT_R * 2 + GAP; // 20 px
+  const SVG_W = COLS * STEP; // 840
+  const SVG_H = ROWS * STEP; // 520
 
   function buildHouseGrid(cols, rows) {
     const grid = Array.from({ length: rows }, () => Array(cols).fill(0));
-    const roofRows = Math.floor(rows * 0.38);
+    const roofRows  = Math.floor(rows * 0.38);
     const bodyStart = roofRows;
 
     for (let r = 0; r < roofRows; r++) {
@@ -43,8 +44,8 @@
 
   const houseGrid = buildHouseGrid(COLS, ROWS);
 
-  // Build dot list bottom-up (matches original from:'end' stagger)
-  const onDots = [];
+  // Build dot list bottom-up — matches original from:'start' stagger reveal order
+  const dots = [];
   {
     const cr = (ROWS - 1) / 2, cc = (COLS - 1) / 2;
     const maxDist = Math.sqrt(cr * cr + cc * cc) || 1;
@@ -52,53 +53,28 @@
       for (let c = 0; c < COLS; c++) {
         if (houseGrid[r][c] === 1) {
           const t = Math.sqrt((r - cr) ** 2 + (c - cc) ** 2) / maxDist;
-          // deterministic jitter — same visual as the random() version but stable across redraws
           const jitter = (Math.sin(r * 17.3 + c * 31.7) - 0.5) * 0.18;
           const brightness = Math.min(1.15, Math.max(0.28, 0.48 + t * 0.57 + jitter));
-          onDots.push({ x: (c + 0.5) * STEP, y: (r + 0.5) * STEP, brightness });
+          dots.push({ x: (c + 0.5) * STEP, y: (r + 0.5) * STEP, brightness });
         }
       }
     }
   }
 
-  let canvasEl, sectionEl, counterWrapEl, retentionEl;
+  let sectionEl, svgEl, counterWrapEl, retentionEl;
   let count = $state(0);
-  let numVisible = 0;
-  let ctx;
-
-  function getDotColor() {
-    return getComputedStyle(document.body).getPropertyValue('--dot-color').trim() || '#a9d9ae';
-  }
-
-  function hexToRgb(hex) {
-    const h = hex.replace('#', '');
-    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
-  }
-
-  function draw() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
-    const [br, bg, bb] = hexToRgb(getDotColor());
-    const n = Math.min(Math.floor(numVisible), onDots.length);
-    for (let i = 0; i < n; i++) {
-      const { x, y, brightness } = onDots[i];
-      ctx.fillStyle = `rgb(${Math.min(255,Math.round(br*brightness))},${Math.min(255,Math.round(bg*brightness))},${Math.min(255,Math.round(bb*brightness))})`;
-      ctx.beginPath();
-      ctx.arc(x, y, DOT_R, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
 
   onMount(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      count = 25000;
+      return;
+    }
 
-    ctx = canvasEl.getContext('2d');
-
-    gsap.set(counterWrapEl, { opacity: 0 });
-    gsap.set(retentionEl, { opacity: 0 });
-
-    const proxy   = { n: 0 };
+    const dotEls  = svgEl.querySelectorAll('.hs-dot');
     const counter = { val: 0 };
+
+    gsap.set([counterWrapEl, retentionEl], { opacity: 0 });
+    gsap.set(dotEls, { opacity: 0 });
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -108,16 +84,16 @@
         end: '+=3200',
         scrub: 1,
         anticipatePin: 1,
-      }
+      },
     });
 
     tl
       .to(counterWrapEl, { opacity: 1, duration: 0.5 })
-      .to(proxy, {
-        n: onDots.length,
+      .to(dotEls, {
+        opacity: 1,
         duration: 8,
+        stagger: { each: 8 / dotEls.length, from: 'start' },
         ease: 'none',
-        onUpdate() { numVisible = proxy.n; draw(); },
       }, '<')
       .to(counter, {
         val: 25000,
@@ -127,27 +103,31 @@
       }, '<')
       .to(retentionEl, { opacity: 1, duration: 2 }, '+=1');
 
-    // Redraw when theme class changes so dot color stays correct
-    const observer = new MutationObserver(draw);
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-
-    return () => {
-      tl.kill();
-      observer.disconnect();
-    };
+    return () => tl.kill();
   });
 </script>
 
 <section class="hs-section" bind:this={sectionEl}>
   <div class="hs-house-wrap">
-    <canvas
-      bind:this={canvasEl}
-      width={CANVAS_W}
-      height={CANVAS_H}
-      class="hs-canvas"
-      aria-label="Dot matrix house representing 25,000 people placed in permanent housing"
+    <svg
+      bind:this={svgEl}
+      viewBox="0 0 {SVG_W} {SVG_H}"
+      width={SVG_W}
+      height={SVG_H}
+      class="hs-svg"
       role="img"
-    ></canvas>
+      aria-label="Dot matrix house representing 25,000 people placed in permanent housing"
+    >
+      {#each dots as dot}
+        <circle
+          class="hs-dot"
+          cx={dot.x}
+          cy={dot.y}
+          r={DOT_R}
+          style="fill: var(--dot-color, #a9d9ae); filter: brightness({dot.brightness.toFixed(3)})"
+        />
+      {/each}
+    </svg>
   </div>
 
   <div class="hs-counter" bind:this={counterWrapEl}>
@@ -177,7 +157,7 @@
     justify-content: center;
   }
 
-  .hs-canvas {
+  .hs-svg {
     display: block;
     max-width: 100%;
     height: auto;
