@@ -10,6 +10,7 @@
   import HousingSuccess from './components/HousingSuccess.svelte';
   import S11_WayHome from './scenes/S11_WayHome.svelte';
   import WelfareStates from './components/WelfareStates.svelte';
+  import FinlandInfographic from './components/FinlandInfographic.svelte';
   import Chapter from './components/Chapter.svelte';
   import Outro   from './components/Outro.svelte';
   import { chapters } from './lib/chapters.js';
@@ -46,7 +47,7 @@
       {#snippet children()}<WelfareStates />{/snippet}
     </Chapter>
   {:else}
-    <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body} />
+    <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body} subheader={chapter.subheader} afterBody={chapter.afterBody} />
   {/if}
   {#if i === 2}
     <DataInfographics />
@@ -57,6 +58,9 @@
   {/if}
   {#if i === 5}
     <S11_WayHome />
+  {/if}
+  {#if i === 6}
+    <FinlandInfographic />
   {/if}
 {/each}
 

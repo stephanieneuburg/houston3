@@ -1,5 +1,5 @@
 <script>
-  let { index, title, hideTitle = false, body = null, children } = $props();
+  let { index, title, hideTitle = false, body = null, subheader = null, afterBody = null, children } = $props();
 
   const words = title.split(' ');
   const splitTitle = words.length > 3;
@@ -23,6 +23,12 @@
       </h2>
     {/if}
     {#each (body ?? '').split('\n\n').filter(p => p.trim()) as paragraph}
+      <p class="chapter-text">{paragraph}</p>
+    {/each}
+    {#if subheader}
+      <h3 class="chapter-subheader">{subheader}</h3>
+    {/if}
+    {#each (afterBody ?? '').split('\n\n').filter(p => p.trim()) as paragraph}
       <p class="chapter-text">{paragraph}</p>
     {/each}
   </div>
@@ -98,5 +104,16 @@
 
   .chapter-text:first-of-type {
     margin-top: 0;
+  }
+
+  .chapter-subheader {
+    font-family: "noka", sans-serif;
+    font-weight: 300;
+    font-size: 2rem;
+    line-height: 1.25;
+    color: var(--text-primary, #2c3e48);
+    transition: color 0.9s ease;
+    margin-top: 3rem;
+    margin-bottom: 0.25rem;
   }
 </style>
