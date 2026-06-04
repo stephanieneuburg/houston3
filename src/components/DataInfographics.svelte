@@ -326,8 +326,8 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 80px 100px 80px 120px;
+    justify-content: flex-end;
+    padding: 80px 100px 48px 120px;
   }
 
   .stat-number {
@@ -360,11 +360,7 @@
   }
 
   .follow-text {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 80px 100px 80px 120px;
+    padding: 48px 100px 80px 120px;
   }
 
   .follow-paragraph {

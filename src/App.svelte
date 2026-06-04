@@ -6,6 +6,8 @@
   import Intro   from './components/Intro.svelte';
   import HomelessnessMap from './components/HomelessnessMap.svelte';
   import DataInfographics from './components/DataInfographics.svelte';
+  import HoustonFocusMap from './components/HoustonFocusMap.svelte';
+  import HousingSuccess from './components/HousingSuccess.svelte';
   import Chapter from './components/Chapter.svelte';
   import Outro   from './components/Outro.svelte';
   import { chapters } from './lib/chapters.js';
@@ -42,6 +44,10 @@
   {/if}
   {#if i === 2}
     <DataInfographics />
+  {/if}
+  {#if i === 4}
+    <HoustonFocusMap />
+    <HousingSuccess />
   {/if}
 {/each}
 

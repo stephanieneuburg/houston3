@@ -8,7 +8,7 @@
   const titleLine2 = splitTitle ? words.slice(splitAt).join(' ') : '';
 </script>
 
-<section class="chapter" class:has-extra={!!children} id="chapter-{index + 1}">
+<section class="chapter" class:has-extra={!!children} class:no-body={!body} id="chapter-{index + 1}">
   <div class="chapter-inner">
     <p class="chapter-label">Chapter {index + 1}</p>
     {#if !hideTitle}
@@ -22,7 +22,7 @@
         {/if}
       </h2>
     {/if}
-    {#each (body ?? 'Content for this chapter will be added in the next step.').split('\n\n') as paragraph}
+    {#each (body ?? '').split('\n\n').filter(p => p.trim()) as paragraph}
       <p class="chapter-text">{paragraph}</p>
     {/each}
   </div>
@@ -39,6 +39,11 @@
     display: flex;
     align-items: center;
     padding: 80px 100px 80px 120px;
+  }
+
+  .chapter.no-body {
+    min-height: auto;
+    padding-bottom: 48px;
   }
 
   .chapter.has-extra {
