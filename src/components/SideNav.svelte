@@ -164,7 +164,7 @@
 
     myTriggers.push(ScrollTrigger.create({
       trigger: '#outro',
-      start: 'top bottom',
+      start: 'top top',
       end: 'bottom top',
       onEnter:     () => { if (!outroTl) outroTl = buildOutroTl(); outroTl.play(); },
       onLeaveBack: () => outroTl?.reverse(),

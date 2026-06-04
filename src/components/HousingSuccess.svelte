@@ -5,24 +5,22 @@
   gsap.registerPlugin(ScrollTrigger);
 
   const COLS = 42, ROWS = 26;
+  const DOT_R = 8, GAP = 4, STEP = DOT_R * 2 + GAP;
+  const CANVAS_W = COLS * STEP, CANVAS_H = ROWS * STEP;
 
   function buildHouseGrid(cols, rows) {
     const grid = Array.from({ length: rows }, () => Array(cols).fill(0));
     const roofRows = Math.floor(rows * 0.38);
     const bodyStart = roofRows;
 
-    // Roof: triangle, apex at top row, full width at bodyStart
     for (let r = 0; r < roofRows; r++) {
       const indent = Math.round((roofRows - 1 - r) / (roofRows - 1) * (cols / 2 - 1));
       for (let c = indent; c < cols - indent; c++) grid[r][c] = 1;
     }
-
-    // Body: solid rectangle
     for (let r = bodyStart; r < rows; r++) {
       for (let c = 0; c < cols; c++) grid[r][c] = 1;
     }
 
-    // Door: centred bottom cutout
     const doorW = Math.round(cols * 0.12);
     const doorH = Math.round((rows - bodyStart) * 0.44);
     const doorL = Math.round(cols / 2 - doorW / 2);
@@ -30,7 +28,6 @@
       for (let c = doorL; c < doorL + doorW; c++) grid[r][c] = 0;
     }
 
-    // Windows: two symmetric cutouts
     const winW = Math.round(cols * 0.1);
     const winH = Math.round((rows - bodyStart) * 0.28);
     const winTopRow = bodyStart + Math.round((rows - bodyStart) * 0.15);
@@ -44,45 +41,64 @@
     return grid;
   }
 
-  function buildDepthStyles(grid) {
-    const rows = grid.length;
-    const cols = grid[0].length;
-    const cr = (rows - 1) / 2;
-    const cc = (cols - 1) / 2;
+  const houseGrid = buildHouseGrid(COLS, ROWS);
+
+  // Build dot list bottom-up (matches original from:'end' stagger)
+  const onDots = [];
+  {
+    const cr = (ROWS - 1) / 2, cc = (COLS - 1) / 2;
     const maxDist = Math.sqrt(cr * cr + cc * cc) || 1;
-    return grid.map((row, r) =>
-      row.map((cell, c) => {
-        if (!cell) return '';
-        const t = Math.sqrt((r - cr) ** 2 + (c - cc) ** 2) / maxDist;
-        const jitter = (Math.random() - 0.5) * 0.18;
-        const b = Math.min(1.15, Math.max(0.28, 0.48 + t * 0.57 + jitter));
-        return `filter: brightness(${b.toFixed(2)});`;
-      })
-    );
-  }
-
-  const houseGrid   = buildHouseGrid(COLS, ROWS);
-  const depthStyles = buildDepthStyles(houseGrid);
-
-  const cells = [];
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      cells.push({ row: r, col: c, on: houseGrid[r][c] === 1, style: depthStyles[r][c] });
+    for (let r = ROWS - 1; r >= 0; r--) {
+      for (let c = 0; c < COLS; c++) {
+        if (houseGrid[r][c] === 1) {
+          const t = Math.sqrt((r - cr) ** 2 + (c - cc) ** 2) / maxDist;
+          // deterministic jitter — same visual as the random() version but stable across redraws
+          const jitter = (Math.sin(r * 17.3 + c * 31.7) - 0.5) * 0.18;
+          const brightness = Math.min(1.15, Math.max(0.28, 0.48 + t * 0.57 + jitter));
+          onDots.push({ x: (c + 0.5) * STEP, y: (r + 0.5) * STEP, brightness });
+        }
+      }
     }
   }
 
-  let sectionEl, counterWrapEl, retentionEl;
+  let canvasEl, sectionEl, counterWrapEl, retentionEl;
   let count = $state(0);
+  let numVisible = 0;
+  let ctx;
+
+  function getDotColor() {
+    return getComputedStyle(document.body).getPropertyValue('--dot-color').trim() || '#a9d9ae';
+  }
+
+  function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+
+  function draw() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    const [br, bg, bb] = hexToRgb(getDotColor());
+    const n = Math.min(Math.floor(numVisible), onDots.length);
+    for (let i = 0; i < n; i++) {
+      const { x, y, brightness } = onDots[i];
+      ctx.fillStyle = `rgb(${Math.min(255,Math.round(br*brightness))},${Math.min(255,Math.round(bg*brightness))},${Math.min(255,Math.round(bb*brightness))})`;
+      ctx.beginPath();
+      ctx.arc(x, y, DOT_R, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 
   onMount(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const onDots = sectionEl.querySelectorAll('.dot.on');
-    const counter = { val: 0 };
+    ctx = canvasEl.getContext('2d');
 
-    gsap.set(onDots, { opacity: 0, scale: 0 });
     gsap.set(counterWrapEl, { opacity: 0 });
     gsap.set(retentionEl, { opacity: 0 });
+
+    const proxy   = { n: 0 };
+    const counter = { val: 0 };
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -96,36 +112,42 @@
     });
 
     tl
-      // counter fades in immediately
       .to(counterWrapEl, { opacity: 1, duration: 0.5 })
-      // dots fill bottom-up (from:'end' on row-major array = bottom rows first)
-      .to(onDots, {
-        opacity: 1,
-        scale: 1,
-        stagger: { each: 0.006, from: 'end' },
-        ease: 'back.out(1.4)',
-        duration: 0.5,
+      .to(proxy, {
+        n: onDots.length,
+        duration: 8,
+        ease: 'none',
+        onUpdate() { numVisible = proxy.n; draw(); },
       }, '<')
-      // counter increments in sync with dots
       .to(counter, {
         val: 25000,
         duration: 8,
+        ease: 'none',
         onUpdate() { count = Math.round(counter.val); },
       }, '<')
-      // retention line fades in after house is complete
       .to(retentionEl, { opacity: 1, duration: 2 }, '+=1');
 
-    return () => tl.kill();
+    // Redraw when theme class changes so dot color stays correct
+    const observer = new MutationObserver(draw);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    return () => {
+      tl.kill();
+      observer.disconnect();
+    };
   });
 </script>
 
 <section class="hs-section" bind:this={sectionEl}>
   <div class="hs-house-wrap">
-    <div class="dot-grid" style="--cols:{COLS}">
-      {#each cells as cell}
-        <div class="dot {cell.on ? 'on' : 'off'}" style={cell.on ? cell.style : ''}></div>
-      {/each}
-    </div>
+    <canvas
+      bind:this={canvasEl}
+      width={CANVAS_W}
+      height={CANVAS_H}
+      class="hs-canvas"
+      aria-label="Dot matrix house representing 25,000 people placed in permanent housing"
+      role="img"
+    ></canvas>
   </div>
 
   <div class="hs-counter" bind:this={counterWrapEl}>
@@ -155,25 +177,10 @@
     justify-content: center;
   }
 
-  .dot-grid {
-    display: grid;
-    grid-template-columns: repeat(var(--cols), 16px);
-    gap: 4px;
-  }
-
-  .dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-  }
-
-  .dot.on {
-    background: var(--dot-color, #a9d9ae);
-    transition: background 0.9s ease;
-  }
-
-  .dot.off {
-    background: transparent;
+  .hs-canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
   }
 
   .hs-counter {

@@ -9,6 +9,7 @@
   import HoustonFocusMap from './components/HoustonFocusMap.svelte';
   import HousingSuccess from './components/HousingSuccess.svelte';
   import S11_WayHome from './scenes/S11_WayHome.svelte';
+  import WelfareStates from './components/WelfareStates.svelte';
   import Chapter from './components/Chapter.svelte';
   import Outro   from './components/Outro.svelte';
   import { chapters } from './lib/chapters.js';
@@ -39,6 +40,10 @@
   {#if i === 0}
     <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body}>
       {#snippet children()}<HomelessnessMap />{/snippet}
+    </Chapter>
+  {:else if i === 6}
+    <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body}>
+      {#snippet children()}<WelfareStates />{/snippet}
     </Chapter>
   {:else}
     <Chapter index={i} title={chapter.title} hideTitle={chapter.hideTitle} body={chapter.body} />

@@ -15,7 +15,10 @@ export const chapters = [
   },
   { title: 'Zoom in on Houston' },
   { title: 'The Way Home', body: `Houston works not only with clients but also with property owners. When individual housing complexes threatened to withdraw from the system, the city organized direct talks with landlords, streamlined responsibilities, and promised faster responses to problems. The goal was not ideology, but reliability: securing housing in the private market before it is lost.` },
-  { title: 'Comparison to Europe' },
+  {
+    title: 'Comparison to Europe',
+    body: `Houston's situation cannot simply be applied to Europe. The starting conditions are different: The United States has a more market-oriented system, less social housing, and no nationwide right to shelter; New York's "right to shelter" is a special case that was only secured through the Callahan lawsuit.\n\nIn many European countries, the right to protection is more formally enshrined. France has DALO, a legally enforceable right to housing; in the United Kingdom, local authorities have a duty to provide support; and in countries with more developed welfare states, homelessness is more closely linked to public assistance than in the United States.`,
+  },
   {
     title: 'The Cost of Doing Nothing',
     navLabel: 'Terri Harris #3',
