@@ -14,7 +14,7 @@ export const chapters = [
     body: `Terri Harris's homelessness didn't begin with a tent, but much earlier: with domestic violence, depression, caregiving that made going to college impossible, and a daily life where even a single loss of income could throw everything into disarray. When her mother lost her job, Terri's wages as a caregiver were no longer enough to cover the rent. First comes eviction, then life in a car, then the side of the road. After the birth of her daughter, she lives in a tent for a time, until she has to give the child to her sister out of fear of child protective services. In this story, the street is not the beginning, but the final link in a long chain of ruptures.`,
   },
   { title: 'Zoom in on Houston' },
-  { title: 'The Way Home' },
+  { title: 'The Way Home', body: `Houston works not only with clients but also with property owners. When individual housing complexes threatened to withdraw from the system, the city organized direct talks with landlords, streamlined responsibilities, and promised faster responses to problems. The goal was not ideology, but reliability: securing housing in the private market before it is lost.` },
   { title: 'Comparison to Europe' },
   {
     title: 'The Cost of Doing Nothing',

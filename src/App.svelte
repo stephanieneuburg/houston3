@@ -8,6 +8,7 @@
   import DataInfographics from './components/DataInfographics.svelte';
   import HoustonFocusMap from './components/HoustonFocusMap.svelte';
   import HousingSuccess from './components/HousingSuccess.svelte';
+  import S11_WayHome from './scenes/S11_WayHome.svelte';
   import Chapter from './components/Chapter.svelte';
   import Outro   from './components/Outro.svelte';
   import { chapters } from './lib/chapters.js';
@@ -48,6 +49,9 @@
   {#if i === 4}
     <HoustonFocusMap />
     <HousingSuccess />
+  {/if}
+  {#if i === 5}
+    <S11_WayHome />
   {/if}
 {/each}
 
