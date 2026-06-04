@@ -11,6 +11,7 @@
   import S11_WayHome from './scenes/S11_WayHome.svelte';
   import WelfareStates from './components/WelfareStates.svelte';
   import FinlandInfographic from './components/FinlandInfographic.svelte';
+  import HoustonLessons from './components/HoustonLessons.svelte';
   import Chapter from './components/Chapter.svelte';
   import Outro   from './components/Outro.svelte';
   import { chapters } from './lib/chapters.js';
@@ -61,6 +62,9 @@
   {/if}
   {#if i === 6}
     <FinlandInfographic />
+  {/if}
+  {#if i === 8}
+    <HoustonLessons />
   {/if}
 {/each}
 
