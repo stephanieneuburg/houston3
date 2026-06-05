@@ -16,7 +16,9 @@
   let navLines    = [];
   let outroActive = false;
   let navPositions = []; // Y-center of each cluster boundary [0..NUM_CHAPTERS]
-  let outroTl      = null;
+  let outroTl         = null;
+  let outroEl;
+  let outroShouldPlay = false;
 
   const clusters = Array.from({ length: NUM_CHAPTERS + 1 }, (_, i) => i);
   const dots     = Array.from({ length: DOTS_PER_CLUSTER });
@@ -56,6 +58,19 @@
 
   // ── Scroll tracking ──
   function updateNav() {
+    if (outroEl) {
+      const isAtOutro = outroEl.getBoundingClientRect().top <= 0;
+      if (isAtOutro !== outroShouldPlay) {
+        outroShouldPlay = isAtOutro;
+        if (isAtOutro) {
+          if (!outroTl) outroTl = buildOutroTl();
+          outroTl.play();
+        } else {
+          outroTl?.reverse();
+        }
+      }
+    }
+
     if (outroActive || !navPositions.length) return;
 
     const mid = window.innerHeight / 2;
@@ -132,7 +147,7 @@
       gsap.set(indicatorEl, { top: viewportStartTop });
 
       myTriggers.push(ScrollTrigger.create({
-        trigger: '#intro',
+        trigger: '#intro-question',
         start: 'top top',
         end: 'bottom center',
         scrub: 0.6,
@@ -155,20 +170,14 @@
     introTl.play();
 
     myTriggers.push(ScrollTrigger.create({
-      trigger: '#intro',
+      trigger: '#intro-question',
       start: 'top bottom',
       end: 'bottom top',
       onEnterBack: () => introTl.reverse(),
       onLeave:     () => introTl.play(),
     }));
 
-    myTriggers.push(ScrollTrigger.create({
-      trigger: '#outro',
-      start: 'top top',
-      end: 'bottom top',
-      onEnter:     () => { if (!outroTl) outroTl = buildOutroTl(); outroTl.play(); },
-      onLeaveBack: () => outroTl?.reverse(),
-    }));
+    outroEl = document.getElementById('outro');
 
     window.addEventListener('scroll', updateNav, { passive: true });
 

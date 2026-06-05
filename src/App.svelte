@@ -32,6 +32,9 @@
       onLeaveBack: () => document.body.classList.remove('chapter-alt-theme'),
     }));
 
+    // Recalculate after all child pins add their spacers, so #outro trigger fires at the right position.
+    ScrollTrigger.refresh();
+
     return () => triggers.forEach(t => t.kill());
   });
 </script>

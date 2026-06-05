@@ -18,7 +18,6 @@
   // STEPS SVG  (960 × 520)
   // ════════════════════════════════════════════════════════════════════════════
   const SW = 960, SH = 520;
-  const RAIL_X = 28;
   const DR_S = 5;
 
   function genSnake() {
@@ -116,12 +115,12 @@
   let _counterVal = N_DB;
 
   // DOM refs — steps
-  let stepsWrapEl, stepsSvgEl;
-  let stepsGrpEl, snakePolyEl, afterPolyEl, stepsRailEl;
+  let stepsWrapEl;
+  let stepsGrpEl, snakePolyEl, afterPolyEl;
 
   // DOM refs — days
-  let daysWrapEl, daysSvgEl;
-  let daysGrpEl, daysRailEl;
+  let daysWrapEl;
+  let daysGrpEl;
 
   function showTip(e, text) {
     tooltip = { visible: true, x: e.clientX + 14, y: e.clientY + 14, text };
@@ -202,10 +201,6 @@
         end: '+=3200',
         scrub: 1.2,
         anticipatePin: 1,
-        onUpdate(self) {
-          if (stepsRailEl)
-            stepsRailEl.setAttribute('cy', (24 + self.progress * (SH - 48)).toString());
-        },
       },
     });
     tlSteps.to(sp, { t: 1, duration: 5, ease: 'none', onUpdate: () => applySteps(sp.t) });
@@ -220,10 +215,6 @@
         end: '+=4800',
         scrub: 1.2,
         anticipatePin: 1,
-        onUpdate(self) {
-          if (daysRailEl)
-            daysRailEl.setAttribute('cy', (24 + self.progress * (DH - 48)).toString());
-        },
       },
     });
     tlDays.to(dp, { t: 1, duration: 7, ease: 'none', onUpdate: () => applyDays(dp.t) });
@@ -248,18 +239,10 @@
         class="bc-svg"
         viewBox="0 0 {SW} {SH}"
         preserveAspectRatio="xMidYMid meet"
-        bind:this={stepsSvgEl}
         role="img"
         aria-label="76 bureaucratic steps collapse to a streamlined process"
       >
         <rect width={SW} height={SH} fill={COLORS.networkBg} rx="4" />
-
-        <!-- Scroll rail -->
-        <line x1={RAIL_X} y1="24" x2={RAIL_X} y2={SH - 24}
-              stroke={COLORS.textLabel} stroke-width="1" opacity="0.3" />
-        <circle bind:this={stepsRailEl}
-                cx={RAIL_X} cy="24" r="4"
-                fill={COLORS.indicator} opacity="0.85" />
 
         <!-- Labels -->
         <text x="68" y="24"
@@ -335,18 +318,10 @@
         class="bc-svg"
         viewBox="0 0 {DW} {DH}"
         preserveAspectRatio="xMidYMid meet"
-        bind:this={daysSvgEl}
         role="img"
         aria-label="720 days of waiting drain to 32 as Houston reformed the process"
       >
         <rect width={DW} height={DH} fill={COLORS.networkBg} rx="4" />
-
-        <!-- Scroll rail -->
-        <line x1={RAIL_X} y1="24" x2={RAIL_X} y2={DH - 24}
-              stroke={COLORS.textLabel} stroke-width="1" opacity="0.3" />
-        <circle bind:this={daysRailEl}
-                cx={RAIL_X} cy="24" r="4"
-                fill={COLORS.indicator} opacity="0.85" />
 
         <!-- Left col: labels + big counter -->
         <text x="68" y="24"
