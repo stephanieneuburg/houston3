@@ -18,8 +18,10 @@
     WI:3, WY:2, DC:2,
   };
 
+  const TX_ACCENT = '#D6F45C';
+
   const GROUP_COLORS = [
-    '#D6F45C',  // TX accent
+    '#B6D8B6',  // TX initial (muted, blends in with other states)
     '#DCE9F7',  // light blue  (matches data-map palette)
     '#B6D8B6',  // sage green  (matches data-map palette)
     '#8aa8b5',  // steel blue  (--text-label)
@@ -124,13 +126,27 @@
   const HX = (HOUSTON_COL + 0.5) * CELL;
   const HY = (HOUSTON_ROW + 0.5) * CELL;
 
+  function latLonToXY(lat, lon) {
+    const col = Math.min(COLS - 1, Math.max(0, Math.round((lon - (-124.5)) / 57.5 * COLS)));
+    const row = Math.min(ROWS - 1, Math.max(0, Math.round((49.5 - lat) / 25 * ROWS)));
+    return { x: (col + 0.5) * CELL, y: (row + 0.5) * CELL };
+  }
+
+  const TOP_CITIES = [
+    { name: 'NEW YORK',    lat: 40.71, lon: -74.01,  anchor: 'end',   dx: -28, dy: 4 },
+    { name: 'LOS ANGELES', lat: 34.05, lon: -118.24, anchor: 'start', dx:  28, dy: 4 },
+    { name: 'CHICAGO',     lat: 41.85, lon: -87.65,  anchor: 'start', dx:  28, dy: 4 },
+  ].map(c => ({ ...c, ...latLonToXY(c.lat, c.lon) }));
+
   let sectionEl, svgEl, textEl, statEl, statsEl;
 
   onMount(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const otherDots = svgEl.querySelectorAll('[data-state]:not([data-state="TX"])');
+    const txDots = svgEl.querySelectorAll('[data-state="TX"]');
     const houstonGroup = svgEl.querySelector('.houston-group');
+    const cityMarkers = svgEl.querySelectorAll('.city-marker');
 
     gsap.set(houstonGroup, { opacity: 0 });
 
@@ -139,7 +155,7 @@
         trigger: sectionEl,
         pin: true,
         start: 'top top',
-        end: '+=2200',
+        end: '+=1400',
         scrub: 1,
         anticipatePin: 1,
       }
@@ -151,6 +167,8 @@
         duration: 5,
         stagger: { each: 0.018, from: 'random' },
       })
+      .to(txDots, { attr: { fill: TX_ACCENT }, duration: 3, ease: 'power1.inOut' }, '<+=2')
+      .to(cityMarkers, { opacity: 0, duration: 4 }, '<+=2')
       .to(houstonGroup, { opacity: 1, duration: 2 }, '-=1.5');
 
     gsap.set(textEl, { opacity: 0, y: 20 });
@@ -205,6 +223,23 @@
           fill={cell.color}
         />
       {/if}
+    {/each}
+
+    {#each TOP_CITIES as city}
+      <g class="city-marker" pointer-events="none">
+        <circle cx={city.x} cy={city.y} r={20} fill="none" stroke="#4A7DD4" stroke-width="2" />
+        <circle cx={city.x} cy={city.y} r={13} fill="none" stroke="#FF92B4" stroke-width="1.5" />
+        <circle cx={city.x} cy={city.y} r={5}  fill="#FF5A2C" />
+        <text
+          x={city.x + city.dx} y={city.y + city.dy}
+          font-family="'Roboto Mono', 'Courier New', monospace"
+          font-size="9"
+          fill="#2c3e48"
+          letter-spacing="0.12em"
+          font-weight="600"
+          text-anchor={city.anchor}
+        >{city.name}</text>
+      </g>
     {/each}
 
     <g class="houston-group">
