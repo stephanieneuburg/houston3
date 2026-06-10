@@ -267,21 +267,17 @@
 
 <div class="hfm-stat-reveal" bind:this={statEl}>
   <p class="hfm-stat-number">
-    <svg class="hfm-stat-arrow" viewBox="0 0 44 92" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="22" y1="2"  x2="22" y2="73" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
-      <line x1="4"  y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
-      <line x1="40" y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+    <svg class="hfm-stat-arrow" viewBox="0 0 44 77" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="22" y1="2"  x2="22" y2="73" stroke="currentColor" stroke-width="4" stroke-linecap="square"/>
+      <line x1="4"  y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="4" stroke-linecap="square"/>
+      <line x1="40" y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="4" stroke-linecap="square"/>
     </svg>
     60%
   </p>
+  <p class="hfm-stat-subheader">more than 60% regression of homelessness across the Houston region</p>
 </div>
 
 <div class="hfm-stats-grid" bind:this={statsEl}>
-  <div class="hfm-stat-col">
-    <p class="hfm-col-label">Since 2011</p>
-    <p class="hfm-col-number">&gt;60%</p>
-    <p class="hfm-col-desc">decline in homelessness across the Houston region</p>
-  </div>
   <div class="hfm-stat-col">
     <p class="hfm-col-label">By 2024</p>
     <p class="hfm-col-number">–17%</p>
@@ -342,6 +338,7 @@
     color: var(--text-primary);
     transition: color 0.9s ease;
     letter-spacing: -0.02em;
+    margin-bottom: 2rem;
   }
 
   .hfm-stat-arrow {
@@ -351,9 +348,17 @@
     color: currentColor;
   }
 
+  .hfm-stat-subheader {
+    font-size: 1.8rem;
+    line-height: 1.6;
+    color: var(--text-body);
+    transition: color 0.9s ease;
+    max-width: 800px;
+  }
+
   .hfm-stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     margin: 0 100px 0 120px;
     padding: 48px 0 100px;
     border-top: 1px solid var(--text-label);
