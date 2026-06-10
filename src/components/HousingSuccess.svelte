@@ -61,6 +61,10 @@
     }
   }
 
+  const ANIM_DUR = 8;
+  const DOT_FADE = 0.5;
+  const DOT_EACH = (ANIM_DUR - DOT_FADE) / (dots.length - 1 || 1);
+
   let sectionEl, svgEl, counterWrapEl, retentionEl;
   let count = $state(0);
 
@@ -81,7 +85,7 @@
         trigger: sectionEl,
         pin: true,
         start: 'top top',
-        end: '+=3200',
+        end: '+=1800',
         scrub: 1,
         anticipatePin: 1,
       },
@@ -91,13 +95,13 @@
       .to(counterWrapEl, { opacity: 1, duration: 0.5 })
       .to(dotEls, {
         opacity: 1,
-        duration: 8,
-        stagger: { each: 8 / dotEls.length, from: 'start' },
+        duration: DOT_FADE,
+        stagger: { each: DOT_EACH, from: 'start' },
         ease: 'none',
       }, '<')
       .to(counter, {
         val: 25000,
-        duration: 8,
+        duration: ANIM_DUR,
         ease: 'none',
         onUpdate() { count = Math.round(counter.val); },
       }, '<')

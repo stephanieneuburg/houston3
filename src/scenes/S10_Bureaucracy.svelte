@@ -141,7 +141,7 @@
         c.setAttribute('cx', (fx + (tx - fx) * t).toString());
         c.setAttribute('cy', (fy + (ty - fy) * t).toString());
         if (reprSet.has(i)) {
-          c.setAttribute('fill', t > 0.45 ? COLORS.service : COLORS.gov);
+          c.setAttribute('fill', t > 0.45 ? COLORS.hotspotCore : COLORS.gov);
         } else {
           const fade = Math.max(0, 1 - Math.max(0, (t - 0.22) / 0.5));
           c.style.opacity = fade.toString();
@@ -212,7 +212,7 @@
         trigger: daysWrapEl,
         pin: true,
         start: 'top top',
-        end: '+=4800',
+        end: '+=3000',
         scrub: 1.2,
         anticipatePin: 1,
       },
@@ -253,12 +253,12 @@
         <text x="68" y="48"
               font-family={FONTS.mono} font-size="22"
               fill={COLORS.textPrimary} letter-spacing="-0.01em"
-        >76 → fewer steps</text>
+        >BEFORE HOUSTON'S REFORM</text>
 
         <text x="68" y="66"
               font-family={FONTS.mono} font-size="8.5"
               fill={COLORS.gov} opacity="0.85"
-        >76 steps &amp; 720 days · before Houston's reform</text>
+        >76 steps &amp; 720 days needed until being housed</text>
 
         <!-- Snake path connector -->
         <polyline bind:this={snakePolyEl}
@@ -269,7 +269,7 @@
         <!-- After straight connector -->
         <polyline bind:this={afterPolyEl}
                   points={straightPoly}
-                  fill="none" stroke={COLORS.service} stroke-width="2"
+                  fill="none" stroke={COLORS.hotspotCore} stroke-width="2"
                   opacity="0" pointer-events="none" />
 
         <!-- 76 step dots -->
@@ -290,16 +290,16 @@
         <!-- After label (Svelte-reactive only) -->
         <text x={SW / 2} y="462"
               font-family={FONTS.mono} font-size="10"
-              text-anchor="middle" fill={COLORS.service}
+              text-anchor="middle" fill={COLORS.hotspotCore}
               opacity={showAfterLabel ? 1 : 0}
               style="transition: opacity 0.5s ease"
-        >a streamlined process</text>
+        >After: a streamlined process</text>
 
         <!-- Caption -->
         <text x={SW / 2} y="494"
               font-family={FONTS.mono} font-size="7.5"
               text-anchor="middle" fill={COLORS.textLabel} opacity="0.6"
-        >Before: 76 steps across multiple agencies · After: a single streamlined referral</text>
+        >Before: steps across multiple agencies</text>
 
         <!-- Source -->
         <text x={SW - 20} y={SH - 8}
@@ -307,6 +307,7 @@
               text-anchor="end" fill={COLORS.textLabel}
               font-style="italic" opacity="0.6"
         >HUD / Houston Coalition for the Homeless</text>
+
       </svg>
     </div>
   </div>
@@ -367,7 +368,7 @@
         >
           {#each daysDots as dot}
             <circle cx={dot.x} cy={dot.y} r={DR_D}
-                    fill={dot.survivor ? COLORS.service : COLORS.spineNode} />
+                    fill={dot.survivor ? COLORS.hotspotCore : COLORS.spineNode} />
           {/each}
         </g>
 
