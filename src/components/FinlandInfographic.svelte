@@ -170,14 +170,14 @@
   .fi-path-bg {
     fill: none;
     stroke: var(--dot-color, #a9d9ae);
-    stroke-width: 2;
+    stroke-width: 1;
     stroke-opacity: 0.15;
   }
 
   .fi-trace {
     fill: none;
     stroke: var(--dot-color, #a9d9ae);
-    stroke-width: 2.5;
+    stroke-width: 1.2;
     stroke-linecap: round;
   }
 

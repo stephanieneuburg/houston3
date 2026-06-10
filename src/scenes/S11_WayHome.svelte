@@ -273,6 +273,7 @@
             font-style="italic" opacity="0.8"
       >The Way Home / Coalition for the Homeless — simplified schematic</text>
     </svg>
+    <p class="wh-subheader">The Complex System that coordinates the change</p>
   </div>
 </Scene>
 
@@ -283,6 +284,18 @@
     max-width: 1300px;
     margin: 0 auto;
     padding: 0 60px;
+  }
+
+  .wh-subheader {
+    font-family: "noka", sans-serif;
+    font-weight: 300;
+    font-size: 1.6rem;
+    line-height: 1.25;
+    color: var(--text-primary, #2c3e48);
+    transition: color 0.9s ease;
+    margin: 24px 0 0;
+    letter-spacing: -0.01em;
+    text-align: center;
   }
 
   .wh-svg {
