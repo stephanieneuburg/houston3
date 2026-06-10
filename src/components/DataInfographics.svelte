@@ -21,9 +21,7 @@
     [0,0,1,0,0],
     [0,1,1,1,0],
     [1,1,1,1,1],
-    [1,1,1,1,1],
-    [1,0,0,0,1],
-    [1,1,1,1,1],
+    [0,1,0,1,0],
   ];
 
   const PERSON_1965 = [
@@ -116,7 +114,7 @@
       .to(c2, { val: 25000, duration: 2.5,
           onUpdate() { sroCount1978 = Math.round(c2.val); } }, '<')
       .to(d1978, { opacity: 1, scale: 1,
-          stagger: { each: 0.08, from: 'start' }, duration: 0.6, ease: 'back.out(1.5)' }, '<0.5')
+          stagger: { each: 0.15, from: 'start' }, duration: 0.6, ease: 'back.out(1.5)' }, '<0.5')
 
     // Psychiatric phase — appears after a clear pause
       .to(psyTitle, { opacity: 1, y: 0, duration: 1.5 }, '+=2.5')
@@ -214,14 +212,15 @@
     </div>
 
   </div>
+  <p class="dot-legend">● ≈ 2,500 people</p>
 </section>
 
 <div class="stat-reveal" bind:this={statEl}>
   <p class="stat-number">
-    <svg class="stat-arrow" viewBox="0 0 44 92" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="22" y1="2"  x2="22" y2="73" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
-      <line x1="4"  y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
-      <line x1="40" y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
+    <svg class="stat-arrow" viewBox="0 0 44 77" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="22" y1="2"  x2="22" y2="73" stroke="currentColor" stroke-width="4" stroke-linecap="square"/>
+      <line x1="4"  y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="4" stroke-linecap="square"/>
+      <line x1="40" y1="59" x2="22" y2="77" stroke="currentColor" stroke-width="4" stroke-linecap="square"/>
     </svg>
     68%
   </p>
@@ -241,6 +240,7 @@
     background: var(--bg-color);
     transition: background 0.9s ease;
     overflow: hidden;
+    position: relative;
   }
 
   .panels-wrapper {
@@ -298,6 +298,18 @@
     text-transform: uppercase;
     color: var(--text-label);
     margin-bottom: 28px;
+    transition: color 0.9s ease;
+  }
+
+  .dot-legend {
+    font-family: 'Roboto Mono', 'Courier New', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-label);
+    position: absolute;
+    bottom: 48px;
+    left: 120px;
     transition: color 0.9s ease;
   }
 
